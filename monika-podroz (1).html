@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podróż Marzeń · Monika 50</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0e0d0b;--bg2:#161410;--bg3:#1e1b16;--surface:#242018;
+  --border:#2e2a22;--border2:#3d3829;
+  --gold:#613D90;--gold2:#8B6BB1;--gold3:#C4AEDD;
+  --text:#f0ead8;--text2:#b8ae98;--text3:#7a7260;
+  --r:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* INTRO */
+#intro{position:fixed;inset:0;z-index:9999;background:#0a0906;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1.2s ease,visibility 1.2s ease}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro-tag{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:28px;opacity:0;animation:fadeUp .8s .4s forwards}
+.intro-name{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,14vw,110px);font-weight:300;line-height:1;color:var(--text);opacity:0;animation:fadeUp .9s .8s forwards;text-align:center}
+.intro-name em{font-style:italic;color:var(--gold)}
+.intro-sub{font-size:13px;color:var(--text3);letter-spacing:2px;margin-top:20px;opacity:0;animation:fadeUp .8s 1.3s forwards}
+.intro-line{width:1px;height:0;background:linear-gradient(to bottom,var(--gold),transparent);margin-top:36px;animation:growLine 1s 2s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes growLine{to{height:60px}}
+
+/* MAIN */
+main{opacity:0;transition:opacity .8s ease}
+main.visible{opacity:1}
+
+/* HERO */
+.hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,165,90,0.07) 0%,transparent 70%);pointer-events:none}
+.hero-tag{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:32px;display:block}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,9vw,80px);font-weight:300;line-height:1.08;max-width:700px;margin:0 auto 24px}
+.hero h1 em{font-style:italic;color:var(--gold)}
+.hero p{font-size:15px;color:var(--text2);line-height:1.9;max-width:420px;margin:0 auto 48px}
+.hero-scroll{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);display:flex;flex-direction:column;align-items:center;gap:12px}
+.hero-scroll::after{content:'';width:1px;height:48px;background:linear-gradient(to bottom,var(--text3),transparent)}
+
+/* LAYOUT */
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+.sec-label{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,6vw,46px);font-weight:300;line-height:1.1;margin-bottom:32px}
+.sec-title em{font-style:italic;color:var(--gold)}
+.divider{width:100%;height:1px;background:var(--border);margin:64px 0}
+
+/* MAP */
+#map-section{padding:64px 0 0}
+.map-box{position:relative;width:100%;height:300px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:28px}
+#map-svg{width:100%;height:100%}
+.map-pin{cursor:pointer}
+.map-pin circle.bg{transition:r .25s,opacity .25s}
+.map-pin:hover circle.bg{r:14;opacity:.25}
+.map-pin circle.dot{transition:fill .25s}
+.map-pin.active circle.dot{fill:var(--gold3)}
+.pin-lbl{font-family:'Outfit',sans-serif;font-size:9px;fill:var(--gold2);pointer-events:none;user-select:none}
+
+/* CHIPS */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px}
+.chip{padding:7px 15px;border-radius:40px;border:1px solid var(--border2);font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;background:transparent;font-family:'Outfit',sans-serif;white-space:nowrap}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+.chip.active{background:var(--gold);color:#ffffff;border-color:var(--gold);font-weight:500}
+
+/* PANELS */
+.dest-panel{display:none}
+.dest-panel.active{display:block;animation:fadeUp .35s ease both}
+.dest-header{padding-bottom:28px;border-bottom:1px solid var(--border);margin-bottom:32px}
+.dest-flag{font-size:26px;margin-bottom:14px;display:block}
+.dest-header h2{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,7vw,50px);font-weight:300;line-height:1.05;margin-bottom:8px}
+.dest-header h2 em{font-style:italic;color:var(--gold);font-size:55%;display:block;margin-top:4px}
+.dest-header p{font-size:14px;color:var(--text2);line-height:1.8;max-width:560px}
+.dest-meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:18px}
+.meta-item{font-size:12px;color:var(--text3)}
+.meta-item strong{display:block;color:var(--text2);font-weight:500;font-size:13px;margin-bottom:2px}
+.pick-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;background:rgba(97,61,144,.15);border:1px solid rgba(97,61,144,.4);color:var(--gold2);font-size:11px;padding:5px 14px;border-radius:20px;font-weight:500}
+
+/* GALLERY */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:36px;border-radius:var(--r);overflow:hidden}
+@media(max-width:500px){.gallery{grid-template-columns:repeat(2,1fr)}}
+.gimg{aspect-ratio:4/3;background:var(--surface);overflow:hidden;position:relative}
+.gimg:first-child{grid-column:span 2;aspect-ratio:16/9}
+@media(max-width:500px){.gimg:first-child{grid-column:span 1;aspect-ratio:4/3}}
+.gimg img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease;display:block}
+.gimg:hover img{transform:scale(1.05)}
+.gimg-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--text3)}
+
+/* HOTELS */
+.blk-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;display:block}
+.hotels-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:36px}
+@media(max-width:420px){.hotels-grid{grid-template-columns:1fr}}
+.hcard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;color:inherit;display:block;transition:border-color .2s,transform .2s}
+.hcard:hover{border-color:var(--border2);transform:translateY(-2px)}
+.hstars{font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:6px}
+.hcard h4{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;margin-bottom:3px;color:var(--text);line-height:1.2}
+.hcard p{font-size:12px;color:var(--text3);line-height:1.5}
+.htag{display:inline-block;font-size:10px;background:var(--surface);color:var(--text3);border-radius:4px;padding:3px 8px;margin-top:7px}
+
+/* ATTRACTIONS */
+.attrs{margin-bottom:36px}
+.aitem{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.aitem:last-child{border-bottom:none}
+.anum{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--border2);font-style:italic;flex:0 0 24px;line-height:1}
+.atext h4{font-size:14px;font-weight:500;margin-bottom:2px;color:var(--text)}
+.atext p{font-size:13px;color:var(--text2);line-height:1.7}
+
+/* TIP */
+.tip{background:var(--bg2);border:1px solid var(--border);border-left:2px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:16px 18px;margin-bottom:28px}
+.tip p{font-size:13px;color:var(--text2);line-height:1.8}
+.tip strong{color:var(--text);font-weight:500}
+
+/* BOOK BTN */
+.book-btn{display:block;width:100%;padding:15px;background:var(--gold);color:#ffffff;font-family:'Outfit',sans-serif;font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;text-align:center;text-decoration:none;border-radius:var(--r);border:none;cursor:pointer;transition:background .2s,transform .15s;margin-bottom:60px}
+.book-btn:hover{background:var(--gold2);transform:translateY(-1px)}
+
+/* BUDGET */
+#budget-section{padding:64px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+@media(min-width:600px){.calc-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:800px){.calc-grid{grid-template-columns:repeat(5,1fr)}}
+.ccard{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center}
+.ccard.selected{border-color:var(--gold);background:rgba(97,61,144,.08)}
+.ccard h4{font-size:13px;font-weight:500;margin-bottom:3px;color:var(--text)}
+.ccard p{font-size:11px;color:var(--text3)}
+.ccard .cprice{font-size:12px;color:var(--gold2);margin-top:6px;font-weight:500}
+.slider-wrap{margin:22px 0}
+.slider-lbl{display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:10px}
+.slider-lbl strong{color:var(--text);font-weight:500}
+input[type=range]{width:100%;-webkit-appearance:none;height:2px;background:linear-gradient(to right,var(--gold) var(--pct,0%),var(--border2) var(--pct,0%));border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);border:none;cursor:pointer}
+.budget-result{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:28px 24px;text-align:center}
+.budget-total{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--gold);line-height:1}
+.budget-total sup{font-size:20px;vertical-align:super;color:var(--text3)}
+.bdown{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px;padding-top:22px;border-top:1px solid var(--border)}
+.bitem p{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:4px}
+.bitem strong{font-size:15px;color:var(--text2)}
+
+/* COMPARE */
+#compare-section{padding:64px 0}
+.cpicks{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cpick{padding:7px 14px;border-radius:40px;border:1px solid var(--border2);font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;background:transparent;font-family:'Outfit',sans-serif}
+.cpick.chosen{background:rgba(97,61,144,.2);border-color:var(--gold);color:var(--gold2)}
+.cnote{font-size:12px;color:var(--text3);margin-bottom:22px}
+.ctable-wrap{overflow-x:auto}
+table.ctable{width:100%;border-collapse:collapse;border-radius:var(--r);overflow:hidden;min-width:420px}
+table.ctable th{background:var(--surface);padding:12px 14px;text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);font-weight:400;border-bottom:1px solid var(--border)}
+table.ctable td{padding:13px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border);background:var(--bg2);vertical-align:top;line-height:1.6}
+table.ctable tr:last-child td{border-bottom:none}
+table.ctable td:first-child{color:var(--text);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+.sbar{height:3px;border-radius:2px;background:var(--border2);margin-top:5px;overflow:hidden}
+.sfill{height:100%;background:var(--gold);border-radius:2px}
+.cph{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:40px;text-align:center;color:var(--text3);font-size:14px}
+
+/* FOOTER */
+footer{text-align:center;padding:60px 24px;border-top:1px solid var(--border)}
+footer strong{display:block;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;font-style:italic;color:var(--text2);margin-bottom:8px}
+footer p{font-size:12px;color:var(--text3);letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <p class="intro-tag">voucher urodzinowy · 24 marca</p>
+  <div class="intro-name">Moniko,<br><em>czas lecieć.</em></div>
+  <p class="intro-sub">od całej rodziny · z miłością</p>
+  <div class="intro-line"></div>
+</div>
+
+<main id="main">
+
+<section class="hero">
+  <span class="hero-tag">✈ twoja podróż marzeń</span>
+  <h1>Wybierz dokąd<br>chcesz <em>polecieć</em></h1>
+  <p>Z okazji 50. urodzin cała rodzina złożyła się na jeden wspólny prezent — wyjazd, który sama wybierzesz. Poniżej nasze propozycje.</p>
+  <div class="hero-scroll">odkryj destynacje</div>
+</section>
+
+<section id="map-section">
+<div class="wrap">
+  <span class="sec-label">10 destynacji</span>
+  <h2 class="sec-title">Gdzie chcesz <em>pojechać?</em></h2>
+
+  <div class="map-box">
+    <svg id="map-svg" viewBox="0 0 900 300" preserveAspectRatio="xMidYMid meet">
+      <rect width="900" height="300" fill="#161410"/>
+      <line x1="0" y1="75" x2="900" y2="75" stroke="#2a2620" stroke-width="0.5"/>
+      <line x1="0" y1="150" x2="900" y2="150" stroke="#2a2620" stroke-width="0.5"/>
+      <line x1="0" y1="225" x2="900" y2="225" stroke="#2a2620" stroke-width="0.5"/>
+      <line x1="180" y1="0" x2="180" y2="300" stroke="#2a2620" stroke-width="0.5"/>
+      <line x1="360" y1="0" x2="360" y2="300" stroke="#2a2620" stroke-width="0.5"/>
+      <line x1="540" y1="0" x2="540" y2="300" stroke="#2a2620" stroke-width="0.5"/>
+      <line x1="720" y1="0" x2="720" y2="300" stroke="#2a2620" stroke-width="0.5"/>
+      <!-- Europe -->
+      <path d="M365,55 L405,50 L435,58 L445,72 L428,88 L400,94 L378,84 L362,70Z" fill="#1e1b16" stroke="#2e2a22" stroke-width="0.8"/>
+      <!-- Africa -->
+      <path d="M375,106 L415,100 L440,114 L450,148 L440,188 L420,208 L395,203 L375,182 L365,152 L370,124Z" fill="#1e1b16" stroke="#2e2a22" stroke-width="0.8"/>
+      <!-- Asia -->
+      <path d="M448,46 L548,41 L628,50 L695,60 L715,75 L695,90 L655,96 L595,100 L530,95 L475,84 L450,68Z" fill="#1e1b16" stroke="#2e2a22" stroke-width="0.8"/>
+      <!-- N America -->
+      <path d="M75,56 L165,46 L205,60 L215,85 L195,115 L165,140 L135,150 L105,135 L75,105 L60,80Z" fill="#1e1b16" stroke="#2e2a22" stroke-width="0.8"/>
+      <!-- S America -->
+      <path d="M155,160 L200,153 L220,170 L225,205 L215,245 L195,268 L170,263 L150,243 L143,208 L145,180Z" fill="#1e1b16" stroke="#2e2a22" stroke-width="0.8"/>
+      <!-- Australia -->
+      <path d="M678,158 L738,153 L772,168 L777,193 L758,213 L718,218 L688,208 L673,188 L673,170Z" fill="#1e1b16" stroke="#2e2a22" stroke-width="0.8"/>
+
+      <!-- PINS: Santorini -->
+      <g class="map-pin active" data-dest="santorini" onclick="selectDest('santorini')">
+        <circle class="bg" cx="432" cy="80" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="432" cy="80" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="440" y="74">Santorini</text>
+      </g>
+      <!-- Rzym -->
+      <g class="map-pin" data-dest="rzym" onclick="selectDest('rzym')">
+        <circle class="bg" cx="410" cy="72" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="410" cy="72" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="395" y="66">Rzym</text>
+      </g>
+      <!-- Lizbona -->
+      <g class="map-pin" data-dest="lizbona" onclick="selectDest('lizbona')">
+        <circle class="bg" cx="358" cy="76" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="358" cy="76" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="338" y="70">Lizbona</text>
+      </g>
+      <!-- Malediwy -->
+      <g class="map-pin" data-dest="malediwy" onclick="selectDest('malediwy')">
+        <circle class="bg" cx="598" cy="155" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="598" cy="155" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="606" y="150">Malediwy</text>
+      </g>
+      <!-- Maroko -->
+      <g class="map-pin" data-dest="maroko" onclick="selectDest('maroko')">
+        <circle class="bg" cx="372" cy="98" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="372" cy="98" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="350" y="92">Maroko</text>
+      </g>
+      <!-- Dubaj -->
+      <g class="map-pin" data-dest="dubaj" onclick="selectDest('dubaj')">
+        <circle class="bg" cx="543" cy="98" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="543" cy="98" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="551" y="93">Dubaj</text>
+      </g>
+      <!-- Bali -->
+      <g class="map-pin" data-dest="bali" onclick="selectDest('bali')">
+        <circle class="bg" cx="693" cy="163" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="693" cy="163" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="701" y="158">Bali</text>
+      </g>
+      <!-- Japonia -->
+      <g class="map-pin" data-dest="japonia" onclick="selectDest('japonia')">
+        <circle class="bg" cx="748" cy="75" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="748" cy="75" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="756" y="70">Japonia</text>
+      </g>
+      <!-- Nowy Jork -->
+      <g class="map-pin" data-dest="nowyjork" onclick="selectDest('nowyjork')">
+        <circle class="bg" cx="193" cy="82" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="193" cy="82" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="201" y="77">Nowy Jork</text>
+      </g>
+      <!-- Zanzibar -->
+      <g class="map-pin" data-dest="zanzibar" onclick="selectDest('zanzibar')">
+        <circle class="bg" cx="462" cy="165" r="10" fill="#613D90" opacity="0.18"/>
+        <circle class="dot" cx="462" cy="165" r="5" fill="#613D90"/>
+        <text class="pin-lbl" x="470" y="160">Zanzibar</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="chips" id="chips"></div>
+  <div id="panels"></div>
+</div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<section id="budget-section">
+<div class="wrap">
+  <span class="sec-label">narzędzie</span>
+  <h2 class="sec-title">Kalkulator <em>budżetu</em></h2>
+  <p style="font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.8">Wybierz destynację i liczbę dni — szacowany koszt dla 2 osób (loty + hotel + wydatki).</p>
+  <div class="calc-grid" id="calc-grid"></div>
+  <div class="slider-wrap">
+    <div class="slider-lbl"><span>Liczba dni</span><strong id="days-lbl">7 dni</strong></div>
+    <input type="range" id="days-slider" min="4" max="21" value="7" oninput="updateBudget(this)">
+  </div>
+  <div class="budget-result">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Szacowany budżet · 2 osoby</div>
+    <div class="budget-total"><sup>zł</sup><span id="btotal">—</span></div>
+    <p id="bprompt" style="font-size:11px;color:var(--text3);margin-top:8px">Wybierz destynację powyżej</p>
+    <div class="bdown" id="bdown" style="display:none">
+      <div class="bitem"><p>Loty</p><strong id="bf">—</strong></div>
+      <div class="bitem"><p>Hotel</p><strong id="bh">—</strong></div>
+      <div class="bitem"><p>Życie</p><strong id="bd">—</strong></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="wrap"><div class="divider"></div></div>
+
+<section id="compare-section">
+<div class="wrap">
+  <span class="sec-label">porównaj</span>
+  <h2 class="sec-title">Destynacja <em>do destynacji</em></h2>
+  <p style="font-size:14px;color:var(--text2);margin-bottom:22px">Wybierz 2–4 miejsca żeby je porównać obok siebie.</p>
+  <div class="cpicks" id="cpicks"></div>
+  <p class="cnote" id="cnote">Wybrano: 0 / max 4</p>
+  <div id="coutput"><div class="cph">Wybierz co najmniej 2 destynacje żeby zobaczyć porównanie.</div></div>
+</div>
+</section>
+
+<footer>
+  <strong>Dla Moniki, z okazji 50. urodzin</strong>
+  <p>24 marca · od całej rodziny z miłością ♥</p>
+</footer>
+</main>
+
+<script>
+const D={
+  santorini:{name:'Santorini',sub:'Grecja · Wyspy Cykladzkie',flag:'🇬🇷',pick:true,
+    meta:{lot:'~3–4 godz.',czas:'maj – październik',charakter:'plaża + kultura'},
+    desc:'Biało-niebieskie wioski zawieszone nad kalderą wulkanu, jedne z najpiękniejszych zachodów słońca na świecie i wyjątkowe wina Assyrtiko.',
+    imgs:['https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1601581975053-7c48b4d56dfa?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Canaves Oia Epitome',s:'★★★★★',d:'Oia, widok na kalderę, basen infinity',t:'Luksus',u:'https://www.booking.com/hotel/gr/canaves-oia-epitome.pl.html'},{n:'Grace Hotel Santorini',s:'★★★★★',d:'Imerovigli, Condé Nast top pick',t:'Design',u:'https://www.booking.com/hotel/gr/grace-santorini.pl.html'},{n:'Andronis Concept',s:'★★★★★',d:'Spa & wellness wykute w skale',t:'Relaks',u:'https://www.booking.com/hotel/gr/andronis-concept-wellness-resort.pl.html'},{n:'Mystique Hotel',s:'★★★★★',d:'Oia, jaskiniowe suite\'y',t:'Romantyk',u:'https://www.booking.com/hotel/gr/mystique-santorini.pl.html'}],
+    attrs:[{n:'Zachód słońca w Oia',d:'Jeden z najpiękniejszych zachodów słońca na świecie. Z tarasu przy Kastro 20 min przed zachodem.'},{n:'Starożytne Akrotiri',d:'Minojskie miasto sprzed 3600 lat — greckie Pompeje. Niesamowite zachowanie fresków.'},{n:'Rejs po kalderze',d:'Wycieczka łódką na aktywny wulkan i gorące źródła. Widoki od strony morza są niesamowite.'},{n:'Plaże Red Beach i Perissa',d:'Czarny wulkaniczny piasek, czerwone skały — krajobraz jak z innej planety.'},{n:'Degustacja win Assyrtiko',d:'Jedno z najciekawszych białych win Europy. Winnica Santo Wines z widokiem na kalderę.'}],
+    tip:'Zarezerwuj hotel w Oia lub Imerovigli. Unikaj lipca/sierpnia — maj, czerwiec lub wrzesień to idealne miesiące.',
+    budget:{flight:1400,hotelPN:1200,dailyPP:400},
+    cmp:{cena:'★★★★★',lot:'3–4h',klimat:'Śródziemnomorski',styl:'Plaża + Kultura',czas:'Maj, Wrzesień'}},
+
+  rzym:{name:'Rzym',sub:'Włochy · Wieczne Miasto',flag:'🇮🇹',
+    meta:{lot:'~2,5 godz.',czas:'kwiecień – czerwiec, wrzesień – październik',charakter:'kultura + gastronomia'},
+    desc:'2700 lat historii w jednym mieście. Koloseum, Watykan, Trastevere i najlepsza włoska kuchnia w małych trattorii.',
+    imgs:['https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1529154036614-a60975f5c760?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1585842378054-ee2e52f94ba2?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Hotel de Russie',s:'★★★★★',d:'Piazza del Popolo, ogród, SPA Rocco Forte',t:'Klasyka',u:'https://www.booking.com/hotel/it/hotel-de-russie.pl.html'},{n:'J.K. Place Roma',s:'★★★★★',d:'Butikowy, blisko Pola Marsowego',t:'Design',u:'https://www.booking.com/hotel/it/j-k-place-roma.pl.html'},{n:'Eitch Borromini',s:'★★★★★',d:'Palazzo z XVII w., taras z widokiem',t:'Klimat',u:'https://www.booking.com/hotel/it/eitch-borromini.pl.html'},{n:'Relais Le Clarisse',s:'★★★★',d:'Trastevere, ogród, kameralny',t:'Lokalny vibe',u:'https://www.booking.com/hotel/it/relais-le-clarisse.pl.html'}],
+    attrs:[{n:'Koloseum i Forum Romanum',d:'Serce starożytnego Rzymu. Wejdź na arenę z przewodnikiem — zupełnie inne wrażenie.'},{n:'Muzea Watykańskie',d:'Kaplica Sykstyńska. Bilet z konkretną godziną eliminuje wielogodzinną kolejkę.'},{n:'Spacer przez Trastevere',d:'Najpiękniejsza dzielnica Rzymu — brukowane uliczki, trattorii, lokalne życie. Najlepsza wieczorem.'},{n:'Fontanna di Trevi o świcie',d:'O 6–7 rano prawie pusta. Zupełnie inne doświadczenie niż w ciągu dnia.'},{n:'Wycieczka do Ostii Antycznej',d:'Spokojniejsza niż Pompeje, 30 min metrem. Doskonale zachowane starożytne miasto portowe.'}],
+    tip:'Zostań w centrum: Trastevere, Prati lub przy Panteonie. Kwiecień — nie za gorąco i mniej turystów.',
+    budget:{flight:600,hotelPN:700,dailyPP:250},
+    cmp:{cena:'★★★',lot:'2,5h',klimat:'Śródziemnomorski',styl:'Kultura + Gastronomia',czas:'Kwiecień, Październik'}},
+
+  lizbona:{name:'Lizbona',sub:'Portugalia · Miasto na wzgórzach',flag:'🇵🇹',
+    meta:{lot:'~3,5 godz.',czas:'kwiecień – czerwiec, wrzesień – październik',charakter:'kultura + relaks + morze'},
+    desc:'Miasto tramwajów, azulejos i fado. 30 min pociągiem — plaże Atlantyku. Godzinę dalej — bajkowa Sintra.',
+    imgs:['https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1548707309-dcebeab9ea9b?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Bairro Alto Hotel',s:'★★★★★',d:'Ikoniczny, taras z panoramą miasta',t:'Kultowy',u:'https://www.booking.com/hotel/pt/bairro-alto.pl.html'},{n:'Memmo Alfama',s:'★★★★★',d:'Widok na Tagus i Alfamę, basen',t:'Widoki',u:'https://www.booking.com/hotel/pt/memmo-alfama.pl.html'},{n:'Torel Palace',s:'★★★★★',d:'Ogród z basenem, 7 unikalnych suit',t:'Ogród',u:'https://www.booking.com/hotel/pt/torel-palace-lisbon.pl.html'},{n:'Solar do Castelo',s:'★★★★',d:'Wewnątrz murów zamku, historyczny',t:'Unikat',u:'https://www.booking.com/hotel/pt/solar-do-castelo.pl.html'}],
+    attrs:[{n:'Tramwaj 28 i Alfama',d:'Najstarsza dzielnica — labirynt uliczek, azulejos, fado w małych restauracjach wieczorem.'},{n:'Wyjazd do Sintry',d:'40 min pociągiem — bajkowe pałace w górach (Pena, Quinta da Regaleira). Jeden z najpiękniejszych dni.'},{n:'Plaże Cascais',d:'30 min pociągiem wzdłuż Atlantyku. Cascais śliczne — warto zostać na kolację.'},{n:'Klasztor Hieronimitów',d:'Arcydzieło architektury manuelińskiej. Obok słynna Pastéis de Belém — oryginalne pastel de nata.'},{n:'Wieczór z fado',d:'Restauracja z żywym fado w Alfamie — muzyka duszy Lizbony. Rezerwacja z wyprzedzeniem obowiązkowa.'}],
+    tip:'Lizbona łączy miasto z morzem. Czerwiec i wrzesień idealne — Atlantyk ciepły, tłumów mniej niż w lipcu.',
+    budget:{flight:700,hotelPN:600,dailyPP:200},
+    cmp:{cena:'★★★',lot:'3,5h',klimat:'Atlantycki',styl:'Kultura + Plaża',czas:'Czerwiec, Wrzesień'}},
+
+  malediwy:{name:'Malediwy',sub:'Ocean Indyjski · Koniec świata',flag:'🇲🇻',
+    meta:{lot:'~10–12 godz.',czas:'listopad – kwiecień',charakter:'relaks + nurkowanie'},
+    desc:'1200 wysp na Oceanie Indyjskim. Bungalowy nad wodą, turkusowe laguny i rafa koralowa dosłownie przy pomoście hotelu.',
+    imgs:['https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1540202404-1b927e27fa8b?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Soneva Jani',s:'★★★★★',d:'Willa na wodzie, retraktowany dach',t:'Top świata',u:'https://www.booking.com/hotel/mv/soneva-jani.pl.html'},{n:'Gili Lankanfushi',s:'★★★★★',d:'Eco-luksus, bungalowy nad wodą',t:'Eko-luksus',u:'https://www.booking.com/hotel/mv/gili-lankanfushi.pl.html'},{n:'Baros Maldives',s:'★★★★★',d:'Kameralna, 75 willi, rafa koralowa',t:'Kameralny',u:'https://www.booking.com/hotel/mv/baros.pl.html'},{n:'Four Seasons Kuda Huraa',s:'★★★★★',d:'Blisko Malé, SPA, szkoła nurkowania',t:'All-round',u:'https://www.booking.com/hotel/mv/four-seasons-kuda-huraa.pl.html'}],
+    attrs:[{n:'Snorkeling i nurkowanie',d:'Rafa koralowa przy pomoście. Mantaraje, żółwie i rekiny wielorybe — bez żadnego wysiłku.'},{n:'Kolacja na plaży o zachodzie',d:'Resort organizuje prywatną kolację przy świecach na własnej plaży z szefem kuchni.'},{n:'Rejs z delfinami o świcie',d:'Łódź wypływa o 5:30 — ławice delfinów na środku oceanu. Niesamowite przeżycie.'},{n:'Wycieczka do lokalnej wyspy',d:'Kultura, meczety, lokalne jedzenie — inny świat od resortów.'},{n:'Prywatna piaszczana łacha',d:'Sandbank — kawałek piasku otoczony oceanem, tylko wy dwoje.'}],
+    tip:'Wybierz resort z rafą przy pomoście. Styczeń–marzec — najlepsza widoczność pod wodą.',
+    budget:{flight:3000,hotelPN:3500,dailyPP:300},
+    cmp:{cena:'★★★★★',lot:'10–12h',klimat:'Tropikalny',styl:'Relaks + Nurkowanie',czas:'Styczeń, Marzec'}},
+
+  maroko:{name:'Maroko',sub:'Marrakesz · Miasto zmysłów',flag:'🇲🇦',
+    meta:{lot:'~4,5 godz.',czas:'marzec – maj, październik – listopad',charakter:'kultura + zmysły + przygoda'},
+    desc:'Jedno z najbardziej zmysłowych miast na ziemi. Zapach pomarańczy, turkusowe riady, bazar mediny i Atlas Wysoki za horyzontem.',
+    imgs:['https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1548018560-c7d302d9bbae?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1553913861-c0fddf2619ee?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'La Mamounia',s:'★★★★★',d:'Legendarny pałac, ogrody, SPA',t:'Ikona',u:'https://www.booking.com/hotel/ma/la-mamounia-marrakech.pl.html'},{n:'Royal Mansour',s:'★★★★★',d:'Własne riady, obsługa 1:1',t:'Ekskluzywny',u:'https://www.booking.com/hotel/ma/royal-mansour-marrakech.pl.html'},{n:'Riad Yasmine',s:'★★★★',d:'Instagramowy basen, medina',t:'Klimatyczny',u:'https://www.booking.com/hotel/ma/riad-yasmine.pl.html'},{n:'Riad Kniza',s:'★★★★',d:'Historyczny, przy placu Jemaa',t:'Autentyczny',u:'https://www.booking.com/hotel/ma/riad-kniza.pl.html'}],
+    attrs:[{n:'Plac Jemaa el-Fna',d:'Wieczorem gigantyczny targ z muzyką, akrobatami i jedzeniem. UNESCO World Heritage.'},{n:'Ogrody Majorelle',d:'Intensywny kobaltowy błękit ogrodu botanicznego — YSL kochał to miejsce i jest tu pochowany.'},{n:'Atlas i wioski berberyjskie',d:'Góry 40 km od Marrakeszu. Dolina Ourika — krajobraz nie do opisania.'},{n:'Tradycyjny hammam',d:'Rytuał kąpielowy — peeling kessa, czarne mydło, masaż. La Mamounia ma jeden z najlepszych SPA w Afryce.'},{n:'Kolacja na dachu mediny',d:'Restauracje na dachach przy placu Jemaa — tagine, couscous, herbata miętowa o zachodzie słońca.'}],
+    tip:'Zostań w riadzie w medinie — wtedy czujesz prawdziwe miasto. Kwiecień idealny — ciepło ale nie upalnie.',
+    budget:{flight:800,hotelPN:800,dailyPP:180},
+    cmp:{cena:'★★★',lot:'4,5h',klimat:'Afrykański',styl:'Kultura + Przygoda',czas:'Kwiecień, Listopad'}},
+
+  dubaj:{name:'Dubaj',sub:'ZEA · Miasto przyszłości',flag:'🇦🇪',
+    meta:{lot:'~6 godz.',czas:'październik – kwiecień',charakter:'luksus + zakupy + architektura'},
+    desc:'Najwyższy budynek świata, sztuczne wyspy i pustynia za miastem. Kontrast między futurystyczną architekturą a beduińską tradycją.',
+    imgs:['https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1526495124232-a04e1849168c?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Burj Al Arab',s:'★★★★★',d:'Ikoniczny żagiel, butler 24h',t:'Ikona',u:'https://www.booking.com/hotel/ae/burj-al-arab.pl.html'},{n:'Atlantis The Palm',s:'★★★★★',d:'Sztuczna wyspa, park wodny',t:'Spektakularny',u:'https://www.booking.com/hotel/ae/atlantis-the-palm.pl.html'},{n:'One&Only Royal Mirage',s:'★★★★★',d:'Arabskie pałace na plaży',t:'Elegancja',u:'https://www.booking.com/hotel/ae/oneonlyroyalmirage.pl.html'},{n:'Armani Hotel Dubai',s:'★★★★★',d:'W Burj Khalifa, projekt Armaniego',t:'Design',u:'https://www.booking.com/hotel/ae/armani-hotel-dubai.pl.html'}],
+    attrs:[{n:'Burj Khalifa i widok z 148. piętra',d:'828 m wysokości. Widok na tarasie o zachodzie słońca — niezapomniane.'},{n:'Safari na pustyni',d:'Wieczorny wyjazd na wydmy — jazda quadem, kolacja przy ognisku, pokaz tańca brzucha.'},{n:'Dubai Mall i fontanny',d:'Największe centrum handlowe świata. Spektakl fontann przy Burj Khalifa co wieczór.'},{n:'Dzielnica Al Fahidi',d:'Stare miasto z wieżami wiatrowymi — prawdziwy Dubaj sprzed ropy. Niesamowity kontrast.'},{n:'Kolacja At.mosphere na 122. piętrze',d:'Rezerwacja z kilkumiesięcznym wyprzedzeniem obowiązkowa.'}],
+    tip:'Leć w listopadzie–marcu. Unikaj lata (ponad 45°C). Zostań na Jumeirah Beach — plaża i blisko centrum.',
+    budget:{flight:1200,hotelPN:1800,dailyPP:500},
+    cmp:{cena:'★★★★★',lot:'6h',klimat:'Pustynny',styl:'Luksus + Architektura',czas:'Listopad, Luty'}},
+
+  bali:{name:'Bali',sub:'Indonezja · Wyspa Bogów',flag:'🇮🇩',
+    meta:{lot:'~14–16 godz.',czas:'kwiecień – październik',charakter:'natura + kultura + relaks'},
+    desc:'Świątynie ukryte w dżungli, ryżowe tarasy na zboczach wulkanu, plaże na południu i surfing dla zaawansowanych. Bali to doświadczenie duchowe.',
+    imgs:['https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1518548419970-58e3b4079ab2?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Amandari Ubud',s:'★★★★★',d:'Wille nad doliną rzeki, infinity pool',t:'Legenda',u:'https://www.booking.com/hotel/id/amandari.pl.html'},{n:'Four Seasons Jimbaran',s:'★★★★★',d:'Wille z prywatnym basenem, plaża',t:'Luksus',u:'https://www.booking.com/hotel/id/four-seasons-resort-bali-at-jimbaran-bay.pl.html'},{n:'Komaneka at Bisma',s:'★★★★★',d:'Ubud, tarasy ryżowe, spa',t:'Natura',u:'https://www.booking.com/hotel/id/komaneka-at-bisma.pl.html'},{n:'Alila Villas Uluwatu',s:'★★★★★',d:'Na klifie, ocean, architektura',t:'Widoki',u:'https://www.booking.com/hotel/id/alila-villas-uluwatu.pl.html'}],
+    attrs:[{n:'Ubud i tańce kecak',d:'Kulturalne serce Bali — galerie, gamelan, tańce kecak przy zachodzie słońca w świątyni Uluwatu.'},{n:'Tarasy ryżowe Tegalalang',d:'Ikoniczne tarasy przy Ubud — najlepiej o 7 rano, przed turystami.'},{n:'Świątynia Tanah Lot',d:'Świątynia na skale pośrodku morza. O zachodzie słońca jedno z najpiękniejszych miejsc na ziemi.'},{n:'Trek na wulkan Batur',d:'Wyruszasz o 3 w nocy, wchodzisz na krater o świcie. Niesamowite.'},{n:'Masaż i rytuały wellness',d:'Balijskie spa to sztuka. 2-godzinna sesja z rytuałem kwiatowym, scrubem i masażem.'}],
+    tip:'Połącz Ubud (kultura, natura) z Semaniyakiem lub Canggu (plaża, relaks) — to dwa różne oblicza Bali.',
+    budget:{flight:2600,hotelPN:900,dailyPP:180},
+    cmp:{cena:'★★★',lot:'14–16h',klimat:'Tropikalny',styl:'Natura + Kultura',czas:'Maj, Czerwiec, Lipiec'}},
+
+  japonia:{name:'Japonia',sub:'Tokio + Kioto · Inny świat',flag:'🇯🇵',
+    meta:{lot:'~11–13 godz.',czas:'marzec – maj (wiśnie), październik – listopad (liście)',charakter:'kultura + gastronomia + doświadczenie'},
+    desc:'Kraj łączący tradycję sprzed tysiąca lat z technologią przyszłości. Tokio zaskoczy intensywnością, Kioto zachwyci subtelnością.',
+    imgs:['https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Park Hyatt Tokyo',s:'★★★★★',d:'Z "Między słowami", widok na Fuji',t:'Ikoniczny',u:'https://www.booking.com/hotel/jp/park-hyatt-tokyo.pl.html'},{n:'Aman Tokyo',s:'★★★★★',d:'Minimalizm japoński, SPA',t:'Zen-luksus',u:'https://www.booking.com/hotel/jp/aman-tokyo.pl.html'},{n:'Hiiragiya Ryokan Kioto',s:'★★★★★',d:'Tradycyjny ryokan z 1818 roku',t:'Tradycja',u:'https://www.booking.com/hotel/jp/ryokan-hiiragiya-honkan.pl.html'},{n:'The Ritz-Carlton Kioto',s:'★★★★★',d:'Nad rzeką Kamogawa, widok na góry',t:'Luksus',u:'https://www.booking.com/hotel/jp/the-ritz-carlton-kyoto.pl.html'}],
+    attrs:[{n:'Tokio: Shibuya i Shinjuku',d:'Skrzyżowanie Shibuya o zmroku, neonowe ogrody Shinjuku i wieczór w Golden Gai — obowiązkowo.'},{n:'Kioto: Fushimi Inari',d:'Tysiące torii prowadzących na górę. Wejdź przed świtem — wtedy jest magia, nie tłum.'},{n:'Nishiki Market',d:'Targ kulinarny w centrum Kioto — próbowanie wszystkiego po kawałku.'},{n:'Jednodniowy wypad do Nary',d:'Jelenie chodzące swobodnie po parku, Wielki Budda. 45 min pociągiem z Kioto.'},{n:'Kolacja omakase',d:'Japońska kolacja degustacyjna u szefa — 10 dań, każde perfekcyjne.'}],
+    tip:'Kup Japan Rail Pass przed wylotem. Kwiecień (wiśnie) trzeba rezerwować rok wcześniej.',
+    budget:{flight:3200,hotelPN:1100,dailyPP:350},
+    cmp:{cena:'★★★★',lot:'11–13h',klimat:'Umiarkowany',styl:'Kultura + Gastronomia',czas:'Kwiecień, Listopad'}},
+
+  nowyjork:{name:'Nowy Jork',sub:'USA · Miasto, które nigdy nie śpi',flag:'🇺🇸',
+    meta:{lot:'~10–11 godz.',czas:'kwiecień – czerwiec, wrzesień – listopad',charakter:'miasto + kultura + gastronomia'},
+    desc:'Central Park, Broadway, MoMA i najlepsza pizza poza Włochami. Nowy Jork to miasto, które zmienia perspektywę.',
+    imgs:['https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'The Mark Hotel',s:'★★★★★',d:'Upper East Side, blisko Central Park',t:'Elegancja',u:'https://www.booking.com/hotel/us/the-mark-new-york.pl.html'},{n:'NoMad Hotel',s:'★★★★★',d:'Flatiron, słynna restauracja',t:'Design',u:'https://www.booking.com/hotel/us/the-nomad-hotel.pl.html'},{n:'1 Hotel Central Park',s:'★★★★★',d:'Eco-luksus, widok na park',t:'Eco',u:'https://www.booking.com/hotel/us/1-hotel-central-park.pl.html'},{n:'Arlo SoHo',s:'★★★★',d:'Butikowy, basen na dachu',t:'Hip',u:'https://www.booking.com/hotel/us/arlo-soho.pl.html'}],
+    attrs:[{n:'Central Park i MoMA',d:'Ranek w parku, po południu MoMA z największą kolekcją nowoczesnej sztuki na świecie.'},{n:'High Line i Chelsea Market',d:'Zabytkowa estakada kolejowa jako park nad miastem. Chelsea Market — gastronomia na wysokim poziomie.'},{n:'Brooklyn Bridge o świcie',d:'Przejście mostem o 6 rano — miasto budzi się za plecami, widok na Manhattan od wschodniej strony.'},{n:'Metropolitan Museum of Art',d:'Met to muzeum na cały dzień — starożytny Egipt, moda, malarstwo europejskie.'},{n:'Kolacja na Manhattanie',d:'Le Bernardin, Atomix lub Eleven Madison Park — doświadczenia kulinarne klasy światowej.'}],
+    tip:'Zostań na Manhattanie — Upper West Side lub Midtown. Październik idealny: złoty Central Park, mniej turystów.',
+    budget:{flight:2800,hotelPN:1500,dailyPP:600},
+    cmp:{cena:'★★★★',lot:'10–11h',klimat:'Kontynentalny',styl:'Miasto + Kultura',czas:'Październik, Maj'}},
+
+  zanzibar:{name:'Zanzibar',sub:'Tanzania · Wyspa korzeni',flag:'🇹🇿',
+    meta:{lot:'~10–12 godz.',czas:'czerwiec – październik, grudzień – luty',charakter:'plaża + kultura + nurkowanie'},
+    desc:'Biały piasek, turkusowa woda i Stone Town wpisane na UNESCO. Połączenie afrykańskiej kultury z arabską architekturą i Oceanem Indyjskim.',
+    imgs:['https://images.unsplash.com/photo-1586861203927-800a5acdcc4d?w=1200&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1504253492562-17a214c6b33b?w=800&q=85&auto=format&fit=crop','https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?w=800&q=85&auto=format&fit=crop'],
+    hotels:[{n:'Zuri Zanzibar',s:'★★★★★',d:'Eco-resort, prywatna plaża Kendwa',t:'Eco-luksus',u:'https://www.booking.com/hotel/tz/zuri-zanzibar.pl.html'},{n:'&Beyond Mnemba Island',s:'★★★★★',d:'Prywatna wyspa, 24 bungalowy',t:'Wyjątkowy',u:'https://www.booking.com/hotel/tz/andbeyond-mnemba-island.pl.html'},{n:'Baraza Resort & Spa',s:'★★★★★',d:'Arabski styl, rafa koralowa',t:'Klimat',u:'https://www.booking.com/hotel/tz/baraza-resort-and-spa.pl.html'},{n:'Park Hyatt Zanzibar',s:'★★★★★',d:'Stone Town, historyczny budynek',t:'Centrum',u:'https://www.booking.com/hotel/tz/park-hyatt-zanzibar.pl.html'}],
+    attrs:[{n:'Stone Town',d:'UNESCO — labirynt wąskich uliczek, arabskie drzwi, bazary korzeniowe. Wieczorny targ Forodhani obowiązkowy.'},{n:'Plaże Nungwi i Kendwa',d:'Najpiękniejsze plaże wyspy — morze spokojne przez cały dzień, rafa do snorkelingu.'},{n:'Wycieczka na rafę koralową',d:'Nungwi Reef — żółwie, ośmiornice, kolorowe ryby. Jedna z najpiękniejszych raf w regionie.'},{n:'Prison Island i żółwie Aldabra',d:'Rezerwat gigantycznych żółwi — niektóre mają ponad 100 lat. 20 min łodzią ze Stone Town.'},{n:'Kurs gotowania swahilskiego',d:'Gotowanie z lokalną rodziną — pilipili, biriani, mtuzi wa samaki. Jedno z najlepszych wspomnień wyspy.'}],
+    tip:'Połącz 2–3 dni Stone Town z 5–7 dniami na plaży na północy (Nungwi lub Kendwa). Lipiec–sierpień idealny.',
+    budget:{flight:2400,hotelPN:1000,dailyPP:200},
+    cmp:{cena:'★★★★',lot:'10–12h',klimat:'Tropikalny',styl:'Plaża + Kultura',czas:'Lipiec, Styczeń'}}
+};
+
+const KEYS=Object.keys(D);
+let activeDest='santorini',calcDest=null,comparePicks=[];
+
+function buildUI(){
+  const chips=document.getElementById('chips');
+  const panels=document.getElementById('panels');
+  const cg=document.getElementById('calc-grid');
+  const cp=document.getElementById('cpicks');
+
+  KEYS.forEach(k=>{
+    const d=D[k];
+    // chip
+    const ch=document.createElement('button');
+    ch.className='chip'+(k===activeDest?' active':'');
+    ch.textContent=d.flag+' '+d.name;
+    ch.onclick=()=>selectDest(k);
+    chips.appendChild(ch);
+
+    // panel
+    const p=document.createElement('div');
+    p.className='dest-panel'+(k===activeDest?' active':'');
+    p.id='panel-'+k;
+    p.innerHTML=`
+      <div class="dest-header">
+        <span class="dest-flag">${d.flag}</span>
+        <h2>${d.name}<em>${d.sub}</em></h2>
+        <p>${d.desc}</p>
+        <div class="dest-meta">
+          <div class="meta-item"><strong>Lot z Polski</strong>${d.meta.lot}</div>
+          <div class="meta-item"><strong>Najlepszy czas</strong>${d.meta.czas}</div>
+          <div class="meta-item"><strong>Charakter</strong>${d.meta.charakter}</div>
+        </div>
+        ${d.pick?'<div class="pick-badge">✦ Nasz typ dla Ciebie</div>':''}
+      </div>
+      <div class="gallery">${d.imgs.map(src=>`<div class="gimg"><img src="${src}" loading="lazy" alt="" onerror="this.parentNode.innerHTML='<div class=gimg-ph>${d.flag}</div>'"></div>`).join('')}</div>
+      <span class="blk-label">Polecane hotele</span>
+      <div class="hotels-grid">${d.hotels.map(h=>`<a class="hcard" href="${h.u}" target="_blank"><div class="hstars">${h.s}</div><h4>${h.n}</h4><p>${h.d}</p><span class="htag">${h.t}</span></a>`).join('')}</div>
+      <span class="blk-label">Co zobaczyć i zrobić</span>
+      <div class="attrs">${d.attrs.map((a,i)=>`<div class="aitem"><div class="anum">${i+1}</div><div class="atext"><h4>${a.n}</h4><p>${a.d}</p></div></div>`).join('')}</div>
+      <div class="tip"><p><strong>Nasza wskazówka:</strong> ${d.tip}</p></div>
+      <a class="book-btn" href="https://www.booking.com/searchresults.pl.html" target="_blank">Sprawdź dostępność na Booking.com →</a>
+    `;
+    panels.appendChild(p);
+
+    // calc card
+    const cc=document.createElement('div');
+    cc.className='ccard';cc.id='cc-'+k;
+    const minCost=(d.budget.flight*2+d.budget.hotelPN*5+d.budget.dailyPP*2*5).toLocaleString('pl');
+    cc.innerHTML=`<h4>${d.flag} ${d.name}</h4><p>${d.sub.split('·')[0].trim()}</p><div class="cprice">od ${minCost} zł</div>`;
+    cc.onclick=()=>selectCalc(k,cc);
+    cg.appendChild(cc);
+
+    // compare pick
+    const cpb=document.createElement('button');
+    cpb.className='cpick';cpb.id='cpk-'+k;
+    cpb.textContent=d.flag+' '+d.name;
+    cpb.onclick=()=>toggleCompare(k,cpb);
+    cp.appendChild(cpb);
+  });
+}
+
+function selectDest(k){
+  activeDest=k;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.dest-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.map-pin').forEach(p=>p.classList.remove('active'));
+  const chips=document.getElementById('chips');
+  [...chips.children].forEach(c=>{if(c.textContent.includes(D[k].name))c.classList.add('active')});
+  const panel=document.getElementById('panel-'+k);
+  if(panel)panel.classList.add('active');
+  const pin=document.querySelector(`.map-pin[data-dest="${k}"]`);
+  if(pin)pin.classList.add('active');
+  document.getElementById('map-section').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function selectCalc(k,el){
+  calcDest=k;
+  document.querySelectorAll('.ccard').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateBudget(document.getElementById('days-slider'));
+}
+
+function updateBudget(slider){
+  const days=parseInt(slider.value);
+  const pct=(days-4)/(21-4)*100;
+  slider.style.setProperty('--pct',pct+'%');
+  document.getElementById('days-lbl').textContent=days+' dni';
+  if(!calcDest)return;
+  const b=D[calcDest].budget;
+  const flight=b.flight*2,hotel=b.hotelPN*days,daily=b.dailyPP*2*days,total=flight+hotel+daily;
+  document.getElementById('btotal').textContent=total.toLocaleString('pl');
+  document.getElementById('bprompt').style.display='none';
+  const bd=document.getElementById('bdown');bd.style.display='grid';
+  document.getElementById('bf').textContent=flight.toLocaleString('pl')+' zł';
+  document.getElementById('bh').textContent=hotel.toLocaleString('pl')+' zł';
+  document.getElementById('bd').textContent=daily.toLocaleString('pl')+' zł';
+}
+
+function toggleCompare(k,el){
+  const i=comparePicks.indexOf(k);
+  if(i>-1){comparePicks.splice(i,1);el.classList.remove('chosen');}
+  else if(comparePicks.length<4){comparePicks.push(k);el.classList.add('chosen');}
+  document.getElementById('cnote').textContent=`Wybrano: ${comparePicks.length} / max 4`;
+  renderCompare();
+}
+
+function renderCompare(){
+  const out=document.getElementById('coutput');
+  if(comparePicks.length<2){out.innerHTML='<div class="cph">Wybierz co najmniej 2 destynacje żeby zobaczyć porównanie.</div>';return;}
+  const rows=[{l:'Lot z Polski',k:'lot'},{l:'Klimat',k:'klimat'},{l:'Styl podróży',k:'styl'},{l:'Najlepszy czas',k:'czas'},{l:'Cena (2 os.)',k:'cena'}];
+  let html=`<div class="ctable-wrap"><table class="ctable"><thead><tr><th>Kryterium</th>${comparePicks.map(k=>`<th>${D[k].flag} ${D[k].name}</th>`).join('')}</tr></thead><tbody>`;
+  rows.forEach(r=>{
+    html+=`<tr><td>${r.l}</td>${comparePicks.map(k=>{
+      const v=D[k].cmp[r.k];
+      if(r.k==='cena'){const w=v.length*20;return `<td>${v}<div class="sbar"><div class="sfill" style="width:${w}%"></div></div></td>`;}
+      return `<td>${v}</td>`;
+    }).join('')}</tr>`;
+  });
+  html+=`</tbody></table></div>`;
+  out.innerHTML=html;
+}
+
+window.addEventListener('load',()=>{
+  buildUI();
+  setTimeout(()=>{
+    document.getElementById('intro').classList.add('hide');
+    document.getElementById('main').classList.add('visible');
+  },3400);
+});
+</script>
+</body>
+</html>
